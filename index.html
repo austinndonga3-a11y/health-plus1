@@ -705,6 +705,123 @@
     });
   }
 </script>
+  
+<script type="module">
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut,
+    onAuthStateChanged
+  } from
+    "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "PASTE_YOUR_FIREBASE_API_KEY",
+    authDomain: "health-plus-850b1.firebaseapp.com",
+    projectId: "health-plus-850b1",
+    storageBucket: "health-plus-850b1.firebasestorage.app",
+    messagingSenderId: "647933747754",
+    appId: "1:647933747754:web:4510a7b3ae93b7a2831953"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const message = document.getElementById("authMessage");
+  const status = document.getElementById("authStatus");
+  const logoutButton = document.getElementById("logoutButton");
+
+  function showMessage(text) {
+    if (message) message.textContent = text;
+  }
+
+  function friendlyError(error) {
+    const errors = {
+      "auth/email-already-in-use": "That email already has an account. Try signing in.",
+      "auth/invalid-email": "Please enter a valid email address.",
+      "auth/weak-password": "Choose a stronger password with at least 8 characters.",
+      "auth/invalid-credential": "Email or password is incorrect.",
+      "auth/too-many-requests": "Too many attempts. Please wait and try again.",
+      "auth/network-request-failed": "Check your internet connection and try again."
+    };
+
+    return errors[error.code] || "Something went wrong. Please try again.";
+  }
+
+  document.getElementById("registerForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    showMessage("Creating your account…");
+
+    const email = document.getElementById("registerEmail").value.trim();
+    const password = document.getElementById("registerPassword").value;
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      showMessage("Account created successfully!");
+      event.target.reset();
+    } catch (error) {
+      showMessage(friendlyError(error));
+    }
+  });
+
+  document.getElementById("loginForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    showMessage("Signing in…");
+
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      showMessage("You are signed in!");
+      event.target.reset();
+    } catch (error) {
+      showMessage(friendlyError(error));
+    }
+  });
+
+  document.getElementById("resetPassword")?.addEventListener("click", async () => {
+    const email = document.getElementById("loginEmail").value.trim();
+
+    if (!email) {
+      showMessage("Enter your email in the Sign in email field first.");
+      document.getElementById("loginEmail").focus();
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showMessage("If an account exists for that email, a reset email may arrive shortly.");
+    } catch (error) {
+      showMessage(friendlyError(error));
+    }
+  });
+
+  logoutButton?.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      showMessage("You have signed out.");
+    } catch (error) {
+      showMessage("Could not sign out. Please try again.");
+    }
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (status) {
+      status.textContent = user
+        ? "Signed in as " + user.email
+        : "You are not signed in.";
+    }
+
+    if (logoutButton) logoutButton.hidden = !user;
+  });
+</script>
+
 </body>
 
 </body>
