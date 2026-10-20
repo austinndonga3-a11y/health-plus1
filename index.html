@@ -399,6 +399,58 @@
       html { scroll-behavior: auto; }
       *, *::before, *::after { transition: none !important; }
     }
+    
+/* Healthcare Facility Finder */
+.facility-finder-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  text-align: left;
+}
+
+.facility-finder-form label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.facility-finder-form input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #cbdedb;
+  border-radius: 10px;
+  font: inherit;
+  color: #183b38;
+  background: #ffffff;
+}
+
+.facility-finder-form input:focus {
+  outline: 2px solid #16877c;
+  outline-offset: 2px;
+}
+
+.facility-finder-button {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #087f73;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.facility-finder-button:hover {
+  background: #06685f;
+}
+
+.facility-finder-button:focus-visible {
+  outline: 3px solid #16877c;
+  outline-offset: 3px;
+}
+
   </style>
 </head>
 <body>
@@ -473,17 +525,31 @@
             <a class="text-link" href="#appointment">Try the demo →</a>
           </article>
 
-          <article class="service-card">
-            <div class="service-icon" aria-hidden="true">🏥</div>
-            <h3>Find Healthcare</h3>
-            <p>Search for nearby hospitals and healthcare
-            facilities using an external map service.</p>
-            <a class="text-link"
-              href="https://www.google.com/maps/search/hospitals+near+me"
-              target="_blank" rel="noopener noreferrer">
-              Find facilities →
-            </a>
-          </article>
+        
+<article class="service-card">
+  <div class="service-icon" aria-hidden="true">🏥</div>
+  <h3>Find Healthcare</h3>
+  <p>
+    Enter a town, estate, or area to find hospitals
+    and clinics on Google Maps.
+  </p>
+
+  <form id="facilityFinderForm" class="facility-finder-form">
+    <label for="facilityLocation">Town or area</label>
+    <input
+      type="text"
+      id="facilityLocation"
+      name="location"
+      placeholder="e.g. Othaya, Nyeri"
+      required
+    />
+
+    <button type="submit" class="facility-finder-button">
+      Find hospitals and clinics
+    </button>
+  </form>
+</article>
+
         </div>
       </div>
     </section>
@@ -609,5 +675,37 @@
       }
     );
   </script>
+  
+<script>
+  const facilityFinderForm =
+    document.getElementById("facilityFinderForm");
+
+  if (facilityFinderForm) {
+    facilityFinderForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const locationInput =
+        document.getElementById("facilityLocation");
+
+      const location = locationInput.value.trim();
+
+      if (!location) {
+        locationInput.focus();
+        return;
+      }
+
+      const searchQuery =
+        "hospitals and clinics in " + location;
+
+      const mapsUrl =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(searchQuery);
+
+      window.open(mapsUrl, "_blank", "noopener,noreferrer");
+    });
+  }
+</script>
+</body>
+
 </body>
   </html>
